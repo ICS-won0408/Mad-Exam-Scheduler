@@ -6,13 +6,42 @@
     <script src = "js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/index.css">
+    <link rel="stylesheet" type="text/css" href="css/sidebar.css">
     <title>Mad Exam Scheduler</title>
 </head>
 <body>
+<div id="wrapper">
 
-This is to see how familiar I am with github
-Hopefully I'm not too bad with it.
-Has anything changed??/ hopefully it has.
-hello
+    <!-- Sidebar -->
+    <div id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+            <h2 style="margin-top: 50px;color: white;margin-left:10px;margin-right:10px">Remember to use website to change data to json first.</h2>
+            <a style="margin-left:10px" href="https://shancarter.github.io/mr-data-converter/">Convert Here!</a>
+        </ul>
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1>Exam scheduling</h1>
+                    <p>Paste the formatted data from the conversion website in the box below</p>
+                    <textarea id = "data-input"></textarea>
+                    <button type="button" class="btn btn-primary active" id="submit-data">Process</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+<script>
+    $(document).ready(function(){
+        $("#wrapper").toggleClass("toggled");
+    });
+</script>
+
 </body>
 </html>
