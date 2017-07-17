@@ -49,6 +49,7 @@
 </div>
 <script>
     var hashedArrays = {};
+    var collisions = {};
 
     var jsonParser = function(){
         var rawData = $("#data-input").val();
@@ -59,23 +60,38 @@
         catch(err){
             alert("Invalid JSON Data. ");
         }
-        console.log(parsedData);
+        hasher(parsedData);
     };
 
     var hasher = function(jsonObject){
         for(var key in jsonObject){
             hashedArrays[key] = {};
+            console.log(key);
 
             for(var student in jsonObject[key]){
-                var studentHash = hash(student);
-                hashedArrays[key][studentHash] = true;
+                var currentStudent = jsonObject[key][student];
+                if(currentStudent != '') {
+                    var studentHash = hash(currentStudent);
+                    hashedArrays[key][studentHash] = true;
 
+                }
 
             }
 
         }
 
         console.log(hashedArrays);
+        conflictDetection(jsonObject);
+    };
+
+    //TODO finish conflict detection
+    var conflictDetection = function(jsonObject){
+        for(var key in hashedArrays){
+            for(var number in hashedArrays){
+
+            }
+        }
+
     };
 
 
