@@ -5,8 +5,8 @@
     <script src = "js/jquery.js"></script>
     <script src = "js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="css/index.css">
     <link rel="stylesheet" type="text/css" href="css/sidebar.css">
+    <link rel="stylesheet" type="text/css" href="css/index.css">
     <title>Mad Exam Scheduler</title>
 </head>
 <body>
@@ -17,8 +17,15 @@
      which can be found at: https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE-->
     <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
-            <h2 style="margin-top: 50px;color: white;margin-left:10px;margin-right:10px">Remember to use website to change data to json first.</h2>
+            <h2>Remember to use website to change data to JSON first.</h2>
             <a style="margin-left:10px" href="https://shancarter.github.io/mr-data-converter/">Convert Here!</a>
+            <li></li>
+            <h2>Reminders: </h2>
+            <ol>
+                <li>Sections should be under one column</li>
+                <li>Class numbers should be used for headers</li>
+                <li>Ensure the option selected is Column Dictionary on the parser</li>
+            </ol>
         </ul>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -40,9 +47,30 @@
 
 </div>
 <script>
+    var jsonParser = function(){
+        var rawData = $("#data-input").val();
+
+        try {
+            var parsedData = $.parseJSON(rawData);
+        }
+        catch(err){
+            alert("Invalid JSON Data. ");
+        }
+        console.log(parsedData);
+    };
+
+
+
+
     $(document).ready(function(){
         $("#wrapper").toggleClass("toggled");
+        $("#submit-data").click(jsonParser);
     });
+
+
+
+
+
 </script>
 
 </body>
