@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <script src = "js/jquery.js"></script>
     <script src = "js/bootstrap.min.js"></script>
+    <script src = "js/murmurhash3.js"></script>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/sidebar.css">
     <link rel="stylesheet" type="text/css" href="css/index.css">
@@ -47,6 +48,8 @@
 
 </div>
 <script>
+    var hashedArrays = {};
+
     var jsonParser = function(){
         var rawData = $("#data-input").val();
 
@@ -58,6 +61,24 @@
         }
         console.log(parsedData);
     };
+
+    var hasher = function(jsonObject){
+        for(var key in jsonObject){
+            hashedArrays[key] = {};
+
+            for(var student in jsonObject[key]){
+                var studentHash = hash(student);
+                hashedArrays[key][studentHash] = true;
+
+
+            }
+
+        }
+
+        console.log(hashedArrays);
+    };
+
+
 
 
 
