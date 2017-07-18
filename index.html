@@ -47,13 +47,52 @@
 
 </div>
 <script>
-    var collisions = {};
+
     var schedule = [];
+    var lengths = {};
+    var collisions = {};
+
+    function examSlot(){
+        this.classes = [];
+        this.examinees = 0;
+        this.addExaminees = addExaminees;
+        this.updateClasses = updateClasses;
+
+    }
+
+    function addExaminees(students){
+        this.examinees += students;
+    }
+
+    function updateClasses(classNumber){
+        this.classes.push(classNumber);
+    }
+
+    function checkConflicts(classNumber, classNumber1){
+        if(collisions[classNumber][classNumber1])
+            return true;
+        return false;
+
+    }
+
+
+
+
+
+
 
 
     var t0;
     var t1;
 
+    function sortByConflictNumbers(){
+        return Object.keys(collisions).sort(function(a,b){
+            return Object.keys(collisions[a].length) - Object.keys(collisions[b].length);
+        });
+    }
+
+
+    //Parses JSON data and passes on to the conflict detection method
     var jsonParser = function(){
         t0 = performance.now();
         var rawData = $("#data-input").val();
@@ -66,14 +105,19 @@
         }
         conflictDetection(parsedData);
     };
+
+    //Detects conflicts between different classes.
     var conflictDetection = function(jsonObject){
+
 
         for(var key in jsonObject){
             collisions[key] = {};
+            var length = 0;
             for(var number in jsonObject[key]){
                 if(jsonObject[key][number] === ''){
                     continue;
                 }
+                length++;
                 for(var key1 in jsonObject){
                     if(key1 == key)
                         continue;
@@ -86,12 +130,41 @@
                     }
                 }
             }
+            lengths[key] = length;
         }
         t1 = performance.now();
-        console.log(collisions);
+        scheduler1();
         console.log("call took " + (t1-t0) + " milliseconds");
 
     };
+    var scheduler1 = function(){
+        var sortedLength = sortByConflictNumbers();
+        for(var key in sortedLength){
+            if(key < 200 || (key > 200 && key < 300) || key > 500){
+                if(schedule.length === 0)
+                    schedule[0] = new examSlot();
+
+                for(var i = 0; i < schedule.length; i++){
+                    if(schedule[i].checkConflicts(key) || (schedule[i].examinees + lengths[key] > 175)){
+                        if(typeof schedule[i+1] === 'undefined')
+                            schedule.push(new examSlot());
+                        continue;
+                    }
+                    schedule[i].updateClasses(key);
+                    schedule[i].addExaminees(lengths[key]);
+                }
+
+            }
+
+        }
+
+
+    };
+
+    var sceduler2 = function(conflicts){
+
+    };
+
 
 
 
