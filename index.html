@@ -51,7 +51,11 @@
     var hashedArrays = {};
     var collisions = {};
 
+    var t0;
+    var t1;
+
     var jsonParser = function(){
+        t0 = performance.now();
         var rawData = $("#data-input").val();
 
         try {
@@ -80,17 +84,29 @@
 
         }
 
-        console.log(hashedArrays);
+
         conflictDetection(jsonObject);
     };
 
     //TODO finish conflict detection
     var conflictDetection = function(jsonObject){
         for(var key in hashedArrays){
-            for(var number in hashedArrays){
-
+            collisions[key] = {};
+            for(var number in hashedArrays[key]){
+                for(var key1 in hashedArrays){
+                    if(key1 == key)
+                        continue;
+                    for(var number1 in hashedArrays[key1]){
+                        if(number1 == number){
+                            collisions[key][key1] = true;
+                        }
+                    }
+                }
             }
         }
+        t1 = performance.now();
+        console.log(collisions);
+        console.log("call took " + (t1-t0) + " milliseconds");
 
     };
 
