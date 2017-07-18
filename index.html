@@ -48,6 +48,8 @@
 </div>
 <script>
     var collisions = {};
+    var schedule = [];
+
 
     var t0;
     var t1;
@@ -74,6 +76,8 @@
                 }
                 for(var key1 in jsonObject){
                     if(key1 == key)
+                        continue;
+                    if(collisions[key][key1])
                         continue;
                     for(var number1 in jsonObject[key1]){
                         if(jsonObject[key][number] === jsonObject[key1][number1]){

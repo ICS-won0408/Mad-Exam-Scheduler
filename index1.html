@@ -96,6 +96,8 @@
                 for(var key1 in hashedArrays){
                     if(key1 == key)
                         continue;
+                    if(collisions[key][key1])
+                        continue;
                     for(var number1 in hashedArrays[key1]){
                         if(number1 == number){
                             collisions[key][key1] = true;
