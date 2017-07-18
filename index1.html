@@ -48,6 +48,7 @@
 
 </div>
 <script>
+    var hashedArrays = {};
     var collisions = {};
 
     var t0;
@@ -63,21 +64,40 @@
         catch(err){
             alert("Invalid JSON Data. ");
         }
-        conflictDetection(parsedData);
+        hasher(parsedData);
     };
-    var conflictDetection = function(jsonObject){
 
+    var hasher = function(jsonObject){
         for(var key in jsonObject){
-            collisions[key] = {};
-            for(var number in jsonObject[key]){
-                if(jsonObject[key][number] === ''){
-                    continue;
+            hashedArrays[key] = {};
+
+
+            for(var student in jsonObject[key]){
+                var currentStudent = jsonObject[key][student];
+                if(currentStudent != '') {
+                    var studentHash = hash(currentStudent);
+                    hashedArrays[key][studentHash] = true;
+
                 }
-                for(var key1 in jsonObject){
+
+            }
+
+        }
+
+
+        conflictDetection(jsonObject);
+    };
+
+    //TODO finish conflict detection
+    var conflictDetection = function(jsonObject){
+        for(var key in hashedArrays){
+            collisions[key] = {};
+            for(var number in hashedArrays[key]){
+                for(var key1 in hashedArrays){
                     if(key1 == key)
                         continue;
-                    for(var number1 in jsonObject[key1]){
-                        if(jsonObject[key][number] === jsonObject[key1][number1]){
+                    for(var number1 in hashedArrays[key1]){
+                        if(number1 == number){
                             collisions[key][key1] = true;
                         }
                     }
