@@ -48,7 +48,6 @@
 
 </div>
 <script>
-    var jsonObject = {};
     var collisions = {};
 
     var t0;
@@ -66,29 +65,6 @@
         }
         conflictDetection(parsedData);
     };
-
-    var hasher = function(jsonObject){
-        for(var key in jsonObject){
-            hashedArrays[key] = {};
-
-
-            for(var student in jsonObject[key]){
-                var currentStudent = jsonObject[key][student];
-                if(currentStudent != '') {
-                    var studentHash = hash(currentStudent);
-                    hashedArrays[key][studentHash] = true;
-
-                }
-
-            }
-
-        }
-
-
-        conflictDetection(jsonObject);
-    };
-
-    //TODO finish conflict detection
     var conflictDetection = function(jsonObject){
 
         for(var key in jsonObject){
