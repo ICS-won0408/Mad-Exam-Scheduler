@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <script src = "js/jquery.js"></script>
-    <script src = "js/bootstrap.min.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/sidebar.css">
     <link rel="stylesheet" type="text/css" href="css/index.css">
@@ -37,7 +37,7 @@
                 <div class="col-lg-12">
                     <h1>Exam scheduling</h1>
                     <p>Paste the formatted data from the conversion website in the box below</p>
-                    <textarea id = "data-input"></textarea>
+                    <textarea id="data-input"></textarea>
                     <button type="button" class="btn btn-primary active" id="submit-data">Process</button>
                 </div>
             </div>
@@ -47,64 +47,159 @@
 
 </div>
 <script>
-    var collisions = {};
+
     var schedule = [];
+    var lengths = {};
+    var collisions = {};
+
+    function ExamSlot() {
+        this.classes = [];
+        this.examinees = 0;
+        this.addExaminees = addExaminees;
+        this.updateClasses = updateClasses;
+        this.isConflictPresent = isConflictPresent;
+
+    }
+
+    function addExaminees(students) {
+        this.examinees += students;
+    }
+
+    function updateClasses(classNumber) {
+        this.classes.push(classNumber);
+    }
+
+    function isConflictPresent(classNumbers) {
+        for (var key in classNumbers) {
+
+            if (this.classes.includes(key))
+                return true;
+        }
+
+
+        return false;
+
+    }
 
 
     var t0;
     var t1;
 
-    var jsonParser = function(){
+    function sortByConflictNumbers() {
+        return Object.keys(collisions).sort(function (a, b) {
+            return Object.keys(collisions[b]).length - Object.keys(collisions[a]).length;
+        });
+    }
+
+
+    //Parses JSON data and passes on to the conflict detection method
+    var jsonParser = function () {
         t0 = performance.now();
+        schedule = [];
+        lengths = {};
+        collisions = {};
+
         var rawData = $("#data-input").val();
 
         try {
             var parsedData = $.parseJSON(rawData);
         }
-        catch(err){
+        catch (err) {
             alert("Invalid JSON Data. ");
         }
         conflictDetection(parsedData);
     };
-    var conflictDetection = function(jsonObject){
 
-        for(var key in jsonObject){
+    //Detects conflicts between different classes.
+    var conflictDetection = function (jsonObject) {
+
+
+        for (var key in jsonObject) {
             collisions[key] = {};
-            for(var number in jsonObject[key]){
-                if(jsonObject[key][number] === ''){
+            var length = 0;
+            for (var number in jsonObject[key]) {
+                if (jsonObject[key][number] === '') {
                     continue;
                 }
-                for(var key1 in jsonObject){
-                    if(key1 == key)
+                length++;
+                for (var key1 in jsonObject) {
+                    if (key1 == key)
                         continue;
-                    if(collisions[key][key1])
+                    if (collisions[key][key1])
                         continue;
-                    for(var number1 in jsonObject[key1]){
-                        if(jsonObject[key][number] === jsonObject[key1][number1]){
+                    for (var number1 in jsonObject[key1]) {
+                        if (jsonObject[key][number] === jsonObject[key1][number1]) {
                             collisions[key][key1] = true;
                         }
                     }
                 }
             }
+            lengths[key] = length;
         }
+
+        scheduler1();
+        scheduler2();
+
         t1 = performance.now();
-        console.log(collisions);
-        console.log("call took " + (t1-t0) + " milliseconds");
+
+        console.log(schedule);
+        console.log("Took " + (t1 - t2) + " Milliseconds");
+
+    };
+
+    // Schedules exams which are higher priority first
+    var scheduler1 = function () {
+        var sortedLength = sortByConflictNumbers();
+
+
+        for (var x in sortedLength) {
+            var key = sortedLength[x];
+
+            if (key < 200 || (key >= 300 && key < 400) || key >= 500) {
+                console.log(key);
+                updateExamSlot(key);
+
+            }
+
+        }
+
+
+    };
+
+    var scheduler2 = function () {
+        var sortedLength = sortByConflictNumbers();
+        for (var x in sortedLength) {
+            var key = sortedLength[x];
+            if ((key >= 200 && key < 300) || (key >= 400 && key < 500)) {
+                updateExamSlot(key);
+
+            }
+
+        }
+
+    };
+
+    var updateExamSlot = function (courseNumber) {
+        if (schedule.length === 0)
+            schedule[0] = new ExamSlot();
+        for (var i = 0; i < schedule.length; i++) {
+            if (schedule[i].isConflictPresent(collisions[courseNumber]) || (schedule[i].examinees + lengths[courseNumber] > 175)) {
+                if (typeof schedule[i + 1] === 'undefined')
+                    schedule.push(new ExamSlot());
+                continue;
+            }
+            schedule[i].updateClasses(courseNumber);
+            schedule[i].addExaminees(lengths[courseNumber]);
+            return;
+        }
 
     };
 
 
-
-
-
-
-    $(document).ready(function(){
+    $(document).ready(function () {
         $("#wrapper").toggleClass("toggled");
         $("#submit-data").click(jsonParser);
     });
-
-
-
 
 
 </script>
