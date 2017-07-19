@@ -70,10 +70,12 @@
     }
 
     function isConflictPresent(classNumbers) {
-        for (var i = 0; i < Object.keys(classNumbers).length; i++) {
-            if (this.classes.includes(classNumbers[i]))
+        for (var key in classNumbers) {
+
+            if (this.classes.includes(key))
                 return true;
         }
+
 
         return false;
 
@@ -93,6 +95,10 @@
     //Parses JSON data and passes on to the conflict detection method
     var jsonParser = function () {
         t0 = performance.now();
+        schedule = [];
+        lengths = {};
+        collisions = {};
+
         var rawData = $("#data-input").val();
 
         try {
@@ -130,23 +136,26 @@
             }
             lengths[key] = length;
         }
-        t1 = performance.now();
+
         scheduler1();
         scheduler2();
-        console.log("call took " + (t1 - t0) + " milliseconds");
+
+        t1 = performance.now();
+
         console.log(schedule);
+        console.log("Took " + (t1-t2) +  " Milliseconds");
 
     };
 
     // Schedules exams which are higher priority first
     var scheduler1 = function () {
         var sortedLength = sortByConflictNumbers();
-        console.log(sortedLength);
+
 
         for (var x in sortedLength) {
             var key = sortedLength[x];
 
-            if (key < 200 || (key >= 300 && key < 400) || key > 500) {
+            if (key < 200 || (key >= 300 && key < 400) || key >= 500) {
                 console.log(key);
                 updateExamSlot(key);
 
@@ -173,7 +182,6 @@
     var updateExamSlot = function (courseNumber){
         if (schedule.length === 0)
             schedule[0] = new ExamSlot();
-        console.log(collisions);
         for (var i = 0; i < schedule.length; i++) {
             if (schedule[i].isConflictPresent(collisions[courseNumber]) || (schedule[i].examinees + lengths[courseNumber] > 175)) {
                 if (typeof schedule[i + 1] === 'undefined')
@@ -182,6 +190,7 @@
             }
             schedule[i].updateClasses(courseNumber);
             schedule[i].addExaminees(lengths[courseNumber]);
+            return;
         }
 
     };
