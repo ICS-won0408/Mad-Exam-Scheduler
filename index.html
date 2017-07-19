@@ -52,7 +52,7 @@
     var lengths = {};
     var collisions = {};
 
-    function examSlot() {
+    function ExamSlot() {
         this.classes = [];
         this.examinees = 0;
         this.addExaminees = addExaminees;
@@ -70,7 +70,7 @@
     }
 
     function isConflictPresent(classNumbers) {
-        for (var i = 0; i < classNumbers.length; i++) {
+        for (var i = 0; i < Object.keys(classNumbers).length; i++) {
             if (this.classes.includes(classNumbers[i]))
                 return true;
         }
@@ -85,7 +85,7 @@
 
     function sortByConflictNumbers() {
         return Object.keys(collisions).sort(function (a, b) {
-            return Object.keys(collisions[a]).length - Object.keys(collisions[b]).length;
+            return Object.keys(collisions[b]).length - Object.keys(collisions[a]).length;
         });
     }
 
@@ -132,27 +132,23 @@
         }
         t1 = performance.now();
         scheduler1();
+        scheduler2();
         console.log("call took " + (t1 - t0) + " milliseconds");
+        console.log(schedule);
 
     };
 
     // Schedules exams which are higher priority first
     var scheduler1 = function () {
         var sortedLength = sortByConflictNumbers();
-        for (var key in sortedLength) {
-            if (key < 200 || (key > 200 && key < 300) || key > 500) {
-                if (schedule.length === 0)
-                    schedule[0] = new examSlot();
+        console.log(sortedLength);
 
-                for (var i = 0; i < schedule.length; i++) {
-                    if (schedule[i].isConflictPresent(collisions[key]) || (schedule[i].examinees + lengths[key] > 175)) {
-                        if (typeof schedule[i + 1] === 'undefined')
-                            schedule.push(new examSlot());
-                        continue;
-                    }
-                    schedule[i].updateClasses(key);
-                    schedule[i].addExaminees(lengths[key]);
-                }
+        for (var x in sortedLength) {
+            var key = sortedLength[x];
+
+            if (key < 200 || (key >= 300 && key < 400) || key > 500) {
+                console.log(key);
+                updateExamSlot(key);
 
             }
 
@@ -161,9 +157,36 @@
 
     };
 
-    var sceduler2 = function (conflicts) {
+    var scheduler2 = function () {
+        var sortedLength = sortByConflictNumbers();
+        for (var x in sortedLength) {
+            var key = sortedLength[x];
+            if ((key >= 200 && key < 300) || (key >= 400 && key < 500)) {
+                updateExamSlot(key);
+
+            }
+
+        }
 
     };
+
+    var updateExamSlot = function (courseNumber){
+        if (schedule.length === 0)
+            schedule[0] = new ExamSlot();
+        console.log(collisions);
+        for (var i = 0; i < schedule.length; i++) {
+            if (schedule[i].isConflictPresent(collisions[courseNumber]) || (schedule[i].examinees + lengths[courseNumber] > 175)) {
+                if (typeof schedule[i + 1] === 'undefined')
+                    schedule.push(new ExamSlot());
+                continue;
+            }
+            schedule[i].updateClasses(courseNumber);
+            schedule[i].addExaminees(lengths[courseNumber]);
+        }
+
+    };
+
+
 
 
     $(document).ready(function () {
