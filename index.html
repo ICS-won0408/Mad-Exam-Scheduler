@@ -143,7 +143,7 @@
         t1 = performance.now();
 
         console.log(schedule);
-        console.log("Took " + (t1-t2) +  " Milliseconds");
+        console.log("Took " + (t1 - t2) + " Milliseconds");
 
     };
 
@@ -179,7 +179,7 @@
 
     };
 
-    var updateExamSlot = function (courseNumber){
+    var updateExamSlot = function (courseNumber) {
         if (schedule.length === 0)
             schedule[0] = new ExamSlot();
         for (var i = 0; i < schedule.length; i++) {
@@ -194,8 +194,6 @@
         }
 
     };
-
-
 
 
     $(document).ready(function () {
