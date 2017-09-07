@@ -19,7 +19,7 @@
         <ul class="sidebar-nav">
             <li>
                 <h2>Remember to use website to change data to JSON first.</h2>
-                <a style="margin-left:10px" href="https://shancarter.github.io/mr-data-converter/">Convert Here!</a>
+                <a style="margin-left:10px" href="https://thdoan.github.io/mr-data-converter/">Convert Here!</a>
             </li>
             <li>
                 <h2>Reminders: </h2>
@@ -103,12 +103,16 @@
         collisions = {};
 
         var rawData = $("#data-input").val();
+        rawData = rawData.replace(/col/g, "");
+
+
 
         try {
             var parsedData = $.parseJSON(rawData);
         }
         catch (err) {
             alert("Invalid JSON Data. ");
+            console.log(err);
         }
         conflictDetection(parsedData);
     };
