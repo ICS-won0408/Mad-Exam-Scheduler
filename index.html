@@ -19,7 +19,7 @@
         <ul class="sidebar-nav">
             <li>
                 <h2>Remember to use website to change data to JSON first.</h2>
-                <a style="margin-left:10px" href="https://thdoan.github.io/mr-data-converter/">Convert Here!</a>
+                <a style="margin-left:10px" href="https://thdoan.github.io/mr-data-converter/" target="_blank">Convert Here!</a>
             </li>
             <li>
                 <h2>Reminders: </h2>
@@ -161,8 +161,18 @@
 
         for (var x in sortedLength) {
             var key = sortedLength[x];
+            var category = key;
 
-            if (key < 200 || (key >= 300 && key < 400) || key >= 500) {
+            if(category < 100) {
+                category = 0;
+            }
+            else{
+                category = parseInt(key.toString().charAt(0));
+            }
+
+
+
+            if (category === 0 || category === 1 || category === 3 || category === 5 || category === 6 || category === 7) {
                 console.log(key);
                 updateExamSlot(key);
 
@@ -177,7 +187,16 @@
         var sortedLength = sortByConflictNumbers();
         for (var x in sortedLength) {
             var key = sortedLength[x];
-            if ((key >= 200 && key < 300) || (key >= 400 && key < 500)) {
+            var category = key;
+
+            if(key > 100) {
+                category = parseInt(key.toString().charAt(0));
+            }
+            else{
+                category = 0;
+            }
+
+            if (category === 2 || category === 4|| category === 8) {
                 updateExamSlot(key);
 
             }
