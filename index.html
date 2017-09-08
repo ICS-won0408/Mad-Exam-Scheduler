@@ -36,13 +36,37 @@
     <!-- Page Content -->
     <div id="page-content-wrapper">
         <div class="container-fluid">
-            <div class="row">
+            <div class="row" id = "raw-input">
                 <div class="col-lg-12">
-                    <h1>Exam scheduling</h1>
-                    <p>Paste the formatted data from the conversion website in the box below</p>
-                    <textarea id="data-input"></textarea>
-                    <button type="button" class="btn btn-primary active" id="submit-data">Process</button>
+                    <div class="spinner" style="display:none">
+                        <div class="bounce1"></div>
+                        <div class="bounce2"></div>
+                        <div class="bounce3"></div>
+                        <h3>Smile!</h3>
+                    </div>
+                    <div id = "rawInput">
+                        <h1>Exam scheduling</h1>
+                        <p>Paste the formatted data from the conversion website in the box below</p>
+                        <textarea id="data-input"></textarea>
+                        <button type="button" class="btn btn-primary active" id="submit-data">Process</button>
+                    </div>
                 </div>
+            </div>
+
+            <div id = "results" style="display:none">
+                <table id="schedule" class = "table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Exam Slot</th>
+                            <th>Courses</th>
+                            <th>No. Of Students</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+
             </div>
         </div>
     </div>
@@ -114,7 +138,15 @@
             alert("Invalid JSON Data. ");
             console.log(err);
         }
-        conflictDetection(parsedData);
+
+
+        $("#rawInput").css("display","none");
+        $(".spinner").css("display","");
+
+
+        setTimeout(function(){
+            conflictDetection(parsedData);
+        },500)
     };
 
     //Detects conflicts between different classes.
@@ -146,7 +178,7 @@
 
         scheduler1();
         scheduler2();
-
+        renderResults();
         t1 = performance.now();
 
         console.log(schedule);
@@ -218,6 +250,30 @@
             schedule[i].addExaminees(lengths[courseNumber]);
             return;
         }
+
+    };
+
+    var renderResults = function(){
+        $(".spinner").css("display","none");
+        var stringToAppend = "";
+        for(var slots in schedule){
+            stringToAppend += "<tr>";
+            stringToAppend += ("<td>" + slots + "</td><td>");
+
+            for(var x in schedule[slots].classes){
+                var classNo = schedule[slots].classes[x];
+                stringToAppend += ("<p>" + classNo + "</p>");
+            }
+            stringToAppend += "</td><td>" + schedule[slots].examinees + "</td></tr>";
+
+
+
+
+        }
+
+        $result = $("#results");
+        $result.find('tbody:last-child').append(stringToAppend);
+        $result.css('display','');
 
     };
 
