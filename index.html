@@ -151,9 +151,11 @@
 
     //Detects conflicts between different classes.
     var conflictDetection = function (jsonObject) {
-
+        console.log(jsonObject);
 
         for (var key in jsonObject) {
+            if(key == '')
+                continue;
             collisions[key] = {};
             var length = 0;
             for (var number in jsonObject[key]) {
