@@ -198,7 +198,7 @@
             var key = sortedLength[x];
             var category = key;
 
-            if (category < 100) {
+            if (isNaN(parseInt(key.toString().charAt(2)))) {
                 category = 0;
             }
             else {
@@ -223,11 +223,11 @@
             var key = sortedLength[x];
             var category = key;
 
-            if (key > 100) {
-                category = parseInt(key.toString().charAt(0));
+            if (isNaN(parseInt(key.toString().charAt(2)))) {
+                category = 0;
             }
             else {
-                category = 0;
+                category = parseInt(key.toString().charAt(0));
             }
 
             if (category === 2 || category === 4 || category === 8) {
