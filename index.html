@@ -49,6 +49,18 @@
                         <h1>Exam scheduling</h1>
                         <p>Paste the formatted data from the conversion website in the box below</p>
                         <textarea id="data-input"></textarea>
+                        <h3>The first exam slot falls on a:
+                            <select id = "day-selector">
+                                <option value="1">Day 1</option>
+                                <option value="2">Day 2</option>
+                                <option value="3">Day 3</option>
+                                <option value="4">Day 4</option>
+                                <option value="5">Day 5</option>
+                                <option value="6">Day 6</option>
+                            </select>
+                        </h3>
+
+
                         <button type="button" class="btn btn-primary active" id="submit-data">Process</button>
                     </div>
                 </div>
@@ -130,6 +142,13 @@
         var rawData = $("#data-input").val();
         rawData = rawData.replace(/col/g, "");
 
+        var day = $("#day-selector").val();
+
+        if(day % 2 === 0)
+            day = "even";
+        else
+            day = "odd";
+
 
         try {
             var parsedData = $.parseJSON(rawData);
@@ -150,7 +169,7 @@
         }, 500)
     };
 
-    //Detects conflicts between different classes.
+    //Detects conflicts between different classes. Calls the schedulers
     var conflictDetection = function (jsonObject) {
         console.log(jsonObject);
 
@@ -179,8 +198,8 @@
             lengths[key] = length;
         }
 
-        scheduler1();
-        scheduler2();
+        scheduler1(jsonObject);
+        scheduler2(jsonObject);
         renderResults();
         t1 = performance.now();
 
@@ -190,7 +209,7 @@
     };
 
     // Schedules exams which are higher priority first
-    var scheduler1 = function () {
+    var scheduler1 = function (jsonObject) {
         var sortedLength = sortByConflictNumbers();
 
 
@@ -217,11 +236,12 @@
 
     };
 
-    var scheduler2 = function () {
+    var scheduler2 = function (jsonObject) {
         var sortedLength = sortByConflictNumbers();
         for (var x in sortedLength) {
             var key = sortedLength[x];
             var category = key;
+            var slotConflict = [];
 
             if (isNaN(parseInt(key.toString().charAt(2)))) {
                 category = 0;
@@ -230,16 +250,59 @@
                 category = parseInt(key.toString().charAt(0));
             }
 
-            if (category === 2 || category === 8|| category === 5 || category === 6 || category === 7) {
+            if (category === 1||category === 2 || (category >= 5 && category !== 6)) {
                 updateExamSlot(key);
 
+            }
+            if(category === 6){
+                for(var student in jsonObject[key]){
+                    if(student.length === 1)
+                        slotConflict.push(student.toUpperCase());
+                }
+                updateExamSlot(key, slotConflict);
             }
 
         }
 
     };
 
-    var updateExamSlot = function (courseNumber) {
+    var updateExamSlot = function (courseNumber, slotConflict) {
+        var slotsToSkip = [];
+
+        if(slotConflict.length !== 0){
+            for(var key in slotsToSkip){
+                var block;
+                switch(slotsToSkip[key]){
+                    case "A":
+                        block = 1;
+                        break;
+                    case "B":
+                        block = 2;
+                        break;
+                    case "C":
+                        block = 3;
+                        break;
+                    case "D":
+                        block = 3;
+                        break;
+                    case "E":
+                        block = 11;
+                        break;
+                    case "F":
+                        block = 22;
+                        break;
+                    case "G":
+                        block = 33;
+                        break;
+                    case "H":
+                        block = 33;
+                        break;
+                }
+                slotsToSkip.push(block);
+
+            }
+        }
+
         if (schedule.length === 0)
             schedule[0] = new ExamSlot();
         for (var i = 0; i < schedule.length; i++) {
