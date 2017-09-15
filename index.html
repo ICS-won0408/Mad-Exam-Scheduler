@@ -245,8 +245,9 @@
             }
             if(category === 6){
                 for(var student in jsonObject[key]){
-                    if(jsonObject[key][student].length === 1)
-                        slotConflict.push(student.toUpperCase());
+                    var studentToCheck = jsonObject[key][student];
+                    if(studentToCheck.length === 1)
+                        slotConflict.push(studentToCheck.toUpperCase());
                 }
                 updateExamSlot(key, slotConflict);
             }
@@ -273,7 +274,7 @@
                         slotsThatConflict.push(2);
                         break;
                     case "D":
-                        slotsThatConflict.push(3);
+                        slotsThatConflict.push(2);
                         break;
                     case"E":
                         slotsThatConflict.push(4);
@@ -285,7 +286,7 @@
                         slotsThatConflict.push(6);
                         break;
                     case "H":
-                        slotsThatConflict.push(7);
+                        slotsThatConflict.push(6);
                 }
             }
 
@@ -302,7 +303,7 @@
                             slotsThatConflict.push(6);
                             break;
                         case "D":
-                            slotsThatConflict.push(7);
+                            slotsThatConflict.push(6);
                             break;
                         case"E":
                             slotsThatConflict.push(0);
@@ -314,7 +315,7 @@
                             slotsThatConflict.push(2);
                             break;
                         case "H":
-                            slotsThatConflict.push(3);
+                            slotsThatConflict.push(2);
                     }
                 }
             }
