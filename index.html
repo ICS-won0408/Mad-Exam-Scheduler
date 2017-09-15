@@ -325,7 +325,7 @@
     var determineIfSlotIsFree = function(examSlot, examNumbers){
 
         for(var i = 0; i < examNumbers.length; i++){
-            if((examSlot-examNumbers)%8 === 0)
+            if((examSlot-examNumbers[i])%8 === 0)
                 return false;
         }
 
