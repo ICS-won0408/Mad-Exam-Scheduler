@@ -49,6 +49,14 @@
                         <h1>Exam scheduling</h1>
                         <p>Paste the formatted data from the conversion website in the box below</p>
                         <textarea id="data-input"></textarea>
+                        <h3>The first exam slot falls on a:
+                            <select id = "day-selector">
+                                <option value="1">Day 1/3/5</option>
+                                <option value="2">Day 2/4/6</option>
+                            </select>
+                        </h3>
+
+
                         <button type="button" class="btn btn-primary active" id="submit-data">Process</button>
                     </div>
                 </div>
@@ -150,7 +158,7 @@
         }, 500)
     };
 
-    //Detects conflicts between different classes.
+    //Detects conflicts between different classes. Calls the schedulers
     var conflictDetection = function (jsonObject) {
         console.log(jsonObject);
 
@@ -179,8 +187,8 @@
             lengths[key] = length;
         }
 
-        scheduler1();
-        scheduler2();
+        scheduler1(jsonObject);
+        scheduler2(jsonObject);
         renderResults();
         t1 = performance.now();
 
@@ -190,7 +198,7 @@
     };
 
     // Schedules exams which are higher priority first
-    var scheduler1 = function () {
+    var scheduler1 = function (jsonObject) {
         var sortedLength = sortByConflictNumbers();
 
 
@@ -217,11 +225,12 @@
 
     };
 
-    var scheduler2 = function () {
+    var scheduler2 = function (jsonObject) {
         var sortedLength = sortByConflictNumbers();
         for (var x in sortedLength) {
             var key = sortedLength[x];
             var category = key;
+            var slotConflict = [];
 
             if (isNaN(parseInt(key.toString().charAt(2)))) {
                 category = 0;
@@ -230,20 +239,114 @@
                 category = parseInt(key.toString().charAt(0));
             }
 
-            if (category === 2 || category === 8|| category === 5 || category === 6 || category === 7) {
+            if (category === 1||category === 2 || (category >= 5 && category !== 6)) {
                 updateExamSlot(key);
 
+            }
+            if(category === 6){
+                for(var student in jsonObject[key]){
+                    var studentToCheck = jsonObject[key][student];
+                    if(studentToCheck.length === 1)
+                        slotConflict.push(studentToCheck.toUpperCase());
+                }
+                updateExamSlot(key, slotConflict);
             }
 
         }
 
     };
 
-    var updateExamSlot = function (courseNumber) {
+    var detectBlockConflict = function(blockConflict) {
+        var slotsThatConflict = [];
+
+        var day = $("#day-selector").val();
+
+        for (var i = 0; i < blockConflict.length; i++) {
+            if (day === "1") {
+                switch (blockConflict[i]) {
+                    case "A":
+                        slotsThatConflict.push(0);
+                        break;
+                    case "B":
+                        slotsThatConflict.push(1);
+                        break;
+                    case "C":
+                        slotsThatConflict.push(2);
+                        break;
+                    case "D":
+                        slotsThatConflict.push(2);
+                        break;
+                    case"E":
+                        slotsThatConflict.push(4);
+                        break;
+                    case "F":
+                        slotsThatConflict.push(5);
+                        break;
+                    case "G":
+                        slotsThatConflict.push(6);
+                        break;
+                    case "H":
+                        slotsThatConflict.push(6);
+                }
+            }
+
+            else
+                {
+                    switch (blockConflict[i]) {
+                        case "A":
+                            slotsThatConflict.push(4);
+                            break;
+                        case "B":
+                            slotsThatConflict.push(5);
+                            break;
+                        case "C":
+                            slotsThatConflict.push(6);
+                            break;
+                        case "D":
+                            slotsThatConflict.push(6);
+                            break;
+                        case"E":
+                            slotsThatConflict.push(0);
+                            break;
+                        case "F":
+                            slotsThatConflict.push(1);
+                            break;
+                        case "G":
+                            slotsThatConflict.push(2);
+                            break;
+                        case "H":
+                            slotsThatConflict.push(2);
+                    }
+                }
+            }
+            return slotsThatConflict;
+        };
+
+    var determineIfSlotIsFree = function(examSlot, examNumbers){
+
+        for(var i = 0; i < examNumbers.length; i++){
+            if((examSlot-examNumbers[i])%8 === 0)
+                return false;
+        }
+
+        return true;
+
+    };
+
+    var updateExamSlot = function (courseNumber, slotConflict) {
+        var slotsToSkip = [];
+
+        if(typeof (slotConflict) !== "undefined"){
+            slotsToSkip = detectBlockConflict(slotConflict);
+
+        }
+
+
         if (schedule.length === 0)
             schedule[0] = new ExamSlot();
         for (var i = 0; i < schedule.length; i++) {
-            if (schedule[i].isConflictPresent(collisions[courseNumber]) || (schedule[i].examinees + lengths[courseNumber] > 175)) {
+            if (schedule[i].isConflictPresent(collisions[courseNumber]) || (schedule[i].examinees + lengths[courseNumber] > 175)
+            || !determineIfSlotIsFree(i, slotsToSkip)) {
                 if (typeof schedule[i + 1] === 'undefined')
                     schedule.push(new ExamSlot());
                 continue;
