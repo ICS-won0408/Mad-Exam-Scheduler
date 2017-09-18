@@ -56,6 +56,48 @@
                             </select>
                         </h3>
 
+                        <h3>The following courses can be prioritized:
+                            <select id = "priority1">
+                                <option value="null">No Preference</option>
+                                <option value="0">000</option>
+                                <option value="1">100</option>
+                                <option value="2">200</option>
+                                <option value="3">300</option>
+                                <option value="4">400</option>
+                                <option value="5">500</option>
+                                <option value="6">600</option>
+                                <option value="7">700</option>
+                                <option value="8">800</option>
+                            </select>
+                            <select id = "priority2">
+                                <option value="null">No Preference</option>
+                                <option value="0">000</option>
+                                <option value="1">100</option>
+                                <option value="2">200</option>
+                                <option value="3">300</option>
+                                <option value="4">400</option>
+                                <option value="5">500</option>
+                                <option value="6">600</option>
+                                <option value="7">700</option>
+                                <option value="8">800</option>
+                            </select>
+                            <select id = "priority3">
+                                <option value="null">No Preference</option>
+                                <option value="0">000</option>
+                                <option value="1">100</option>
+                                <option value="2">200</option>
+                                <option value="3">300</option>
+                                <option value="4">400</option>
+                                <option value="5">500</option>
+                                <option value="6">600</option>
+                                <option value="7">700</option>
+                                <option value="8">800</option>
+                            </select>
+
+
+
+                        </h3>
+
 
                         <button type="button" class="btn btn-primary active" id="submit-data">Process</button>
                     </div>
@@ -201,6 +243,8 @@
     var scheduler1 = function (jsonObject) {
         var sortedLength = sortByConflictNumbers();
 
+        var slotConflict = [];
+
 
         for (var x in sortedLength) {
             var key = sortedLength[x];
@@ -213,10 +257,23 @@
                 category = parseInt(key.toString().charAt(0));
             }
 
+            var priority1 = parseInt($("#priority1").val());
+            var priority2 = parseInt($("#priority2").val());
+            var priority3 = parseInt($("#priority3").val());
 
-            if (category === 0 || category === 4 || category === 3) {
-                console.log(key);
-                updateExamSlot(key);
+
+            if (category === priority1 || category === priority2 || category === priority3) {
+                if(category === 6){
+                    for(var student in jsonObject[key]){
+                        var studentToCheck = jsonObject[key][student];
+                        if(studentToCheck.length === 1)
+                            slotConflict.push(studentToCheck.toUpperCase());
+                    }
+                    updateExamSlot(key, slotConflict);
+                } else{
+                    console.log(key);
+                    updateExamSlot(key);
+                }
 
             }
 
@@ -232,6 +289,11 @@
             var category = key;
             var slotConflict = [];
 
+            var priority1 = parseInt($("#priority1").val());
+            var priority2 = parseInt($("#priority2").val());
+            var priority3 = parseInt($("#priority3").val());
+
+
             if (isNaN(parseInt(key.toString().charAt(2)))) {
                 category = 0;
             }
@@ -239,17 +301,18 @@
                 category = parseInt(key.toString().charAt(0));
             }
 
-            if (category === 1||category === 2 || (category >= 5 && category !== 6)) {
-                updateExamSlot(key);
-
-            }
-            if(category === 6){
-                for(var student in jsonObject[key]){
-                    var studentToCheck = jsonObject[key][student];
-                    if(studentToCheck.length === 1)
-                        slotConflict.push(studentToCheck.toUpperCase());
+            if (!(category === priority1 || category === priority2 || category === priority3)) {
+                if(category === 6){
+                    for(var student in jsonObject[key]){
+                        var studentToCheck = jsonObject[key][student];
+                        if(studentToCheck.length === 1)
+                            slotConflict.push(studentToCheck.toUpperCase());
+                    }
+                    updateExamSlot(key, slotConflict);
+                } else {
+                    updateExamSlot(key);
                 }
-                updateExamSlot(key, slotConflict);
+
             }
 
         }
