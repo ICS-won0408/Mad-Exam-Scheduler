@@ -257,9 +257,9 @@
                 category = parseInt(key.toString().charAt(0));
             }
 
-            var priority1 = parseInt($("priority1").val());
-            var priority2 = parseInt($("priority2").val());
-            var priority3 = parseInt($("priority3").val());
+            var priority1 = parseInt($("#priority1").val());
+            var priority2 = parseInt($("#priority2").val());
+            var priority3 = parseInt($("#priority3").val());
 
 
             if (category === priority1 || category === priority2 || category === priority3) {
@@ -289,9 +289,9 @@
             var category = key;
             var slotConflict = [];
 
-            var priority1 = parseInt($("priority1").val());
-            var priority2 = parseInt($("priority2").val());
-            var priority3 = parseInt($("priority3").val());
+            var priority1 = parseInt($("#priority1").val());
+            var priority2 = parseInt($("#priority2").val());
+            var priority3 = parseInt($("#priority3").val());
 
 
             if (isNaN(parseInt(key.toString().charAt(2)))) {
